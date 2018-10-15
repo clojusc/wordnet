@@ -1,4 +1,4 @@
-(defproject clj-wordnet "0.3.0-SNAPSHOT"
+(defproject clojusc/wordnet "0.4.0-SNAPSHOT"
   :description "A WordNet/JWI wrapper library"
   :url "https://github.com/delver/clj-wordnet"
   :license {:name "Creative Commons 3.0"
