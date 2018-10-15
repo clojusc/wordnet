@@ -5,8 +5,8 @@
     :name "Creative Commons 3.0"
     :url "http://creativecommons.org/licenses/by/3.0/legalcode"}
   :dependencies [
-    [org.clojure/clojure "1.6.0"]
-    [edu.mit/jwi "2.4.0"]]
+    [clojusc/jwi "2.4.0-SNAPSHOT"]
+    [org.clojure/clojure "1.9.0"]]
   :global-vars { *warn-on-reflection* true}
   :profiles {
     :dev {
