@@ -1,7 +1,10 @@
-target/
+/target
 .lein-repl-history
 /.lein-failures
 /pom.xml
 /pom.xml.asc
 /.nrepl-port
 .DS_Store
+/resources/jwi/pom*
+/resources/jwi/src
+/resources/jwi/target
