@@ -79,6 +79,14 @@ instructions above.
 => ("domestic_animal" "domesticated_animal" "canine" "canid")
 ```
 
+The previous two have been merged into a single function now offered for
+convenience:
+
+```clj
+(wordnet/synonyms dict "dog" :noun)
+```
+
+
 ## Dictionary
 
 The default dictionary will load definitions from the database as needed

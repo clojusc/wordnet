@@ -6,6 +6,7 @@
     [clojure.string :refer [upper-case lower-case]]
     [wordnet.coerce :as coerce])
   (:import
+    (clojure.lang Keyword)
     (edu.mit.jwi IDictionary Dictionary RAMDictionary)
     (edu.mit.jwi.data ILoadPolicy)
     (edu.mit.jwi.item IIndexWord ISynset ISynsetID SynsetID
@@ -234,3 +235,17 @@
   (let [hypernym-instances (related-synsets synset :hypernym-instance)]
     (concat hypernym-instances
             (mapcat hypernyms hypernym-instances))))
+
+(defn synonyms
+  [^IDictionary dict ^String word ^Keyword pos]
+  (concat
+    (->> (dict word pos)
+         (mapcat (comp words synset))
+         (reduce (fn [acc x] (conj acc (:lemma x)))
+                 #{}))
+    (->> (dict word pos)
+         (mapcat (comp #(related-synsets % :hypernym) synset))
+         (mapcat words)
+         (reduce (fn [acc x] (conj acc (:lemma x)))
+                 #{}))))
+
