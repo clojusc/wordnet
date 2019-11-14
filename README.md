@@ -183,6 +183,24 @@ example below:
 (dict "SID-02086723-N" ; fetch the synset with the specified ID
 ```
 
+## Word Similarity 
+
+Wu-Palmer, Leacock-Chodorow, and Path Semantic Similarity can be computed: 
+
+```clojure
+(require '[wordnet.semantic :as sem])
+
+(sem/path-similarity dict "task#n#1" "job#n#2")  ; path similarity
+
+(sem/wup-similarity dict "task#n#1" "job#n#2")  ; Wu-Palmer similarity
+
+(sem/lch-similarity dict "task#n#1" "job#n#2")  ; Leacock-Chodorow similarity
+```
+Leacock-Chodorow can take a few seconds the first time it is used because it needs to 
+compute the maximum depth of the taxonomy for the given part of speech.  After the first 
+call subsequent calls use the memoized value, so they run quickly. 
+If you are using the modern dictionary you can sidestep the wait by uncommenting the
+line in the code `(def max-depths-memo (atom {:noun-synsets 20, :verb-synsets 14}))`, since those are the values.
 
 ## TODO
 

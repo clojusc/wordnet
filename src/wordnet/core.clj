@@ -63,6 +63,20 @@
   [^IDictionary dict lemma part-of-speech]
   (.findStems (WordnetStemmer. dict) lemma (coerce/pos part-of-speech)))
 
+;;; No adjective-satellites in jwi, AFAICS.
+(def pos-synset-translation
+  {:noun-synsets (coerce/pos "n"),
+   :verb-synsets (coerce/pos "v"),
+   :adverb-synsets (coerce/pos "r"),
+   :adjective-synsets (coerce/pos "a")})
+
+(defn- pos-synsets
+  "Return the complete sequence of synsets for a part of speech."
+  [^IDictionary dict skey]
+  (iterator-seq (locking coarse-lock (.getSynsetIterator
+                                      dict
+                                      (get pos-synset-translation skey)))))
+
 (defn- word-ids
   "Look up word IDs for a part of speech of particular word."
   ([^IDictionary dict part-of-speech]
@@ -97,8 +111,12 @@
                 ([arg]
                  (cond
                   ;; Find by part of speech
-                  (keyword? arg)
+                  (#{:noun :verb :adjective :adverb } arg)
                   (map (partial fetch-word dict) (word-ids dict arg))
+
+                  ;; return synsets
+                  (contains? pos-synset-translation arg)
+                  (map (partial from-synset dict) (pos-synsets dict arg))
 
                   (empty? ^String arg)
                   nil
