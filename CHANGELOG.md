@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.2 (Thu Nov 14 2019)
+* Wu-Palmer, Leacock-Chodorow, and Path semantic similarity measures
+
 ## 0.1.1-SNAPSHOT (on-going)
 * Performance Improvements
 * **BREAKING CHANGES** ```:synonyms``` is no longer a valid key on the fetched map
