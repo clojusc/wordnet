@@ -1,4 +1,4 @@
-(defproject clojusc/wordnet "1.1.2"
+(defproject clojusc/wordnet "1.2.0"
   :description "A WordNet/JWI wrapper library"
   :url "https://github.com/clojusc/wordnet"
   :license {
