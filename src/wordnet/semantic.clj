@@ -1,13 +1,15 @@
 (ns wordnet.semantic
-  "Implement semantic similarity measures including Path, Wu-Palmer, and Leacock-Chodorow"
+  "Implement semantic similarity measures including Path, Wu-Palmer, and
+  Leacock-Chodorow"
   (:require
     [loom.alg]
     [loom.graph]
     [ubergraph.core :as uber]
     [wordnet.core   :as core]))
 
-;;;  Parameters that are "term" are strings of the form <lemma>#<pos>#<number>, e.g. "job#n#2".
-;;;  Credits: The text of some comments was derived from that of Python NLTK wordnet.py.
+;;; Parameters that are "term" are strings of the form <lemma>#<pos>#<number>,
+;;; e.g. "job#n#2".  Credits: The text of some comments was derived from that
+;;; of Python NLTK wordnet.py.
 
 (defn graph-roots
   "Return root nodes of the graph"
@@ -34,7 +36,8 @@
     graph))
 
 (defn build-graph
-  "Build a graph by following edges of the specifed types, edge-types, a collection."
+  "Build a graph by following edges of the specifed types, edge-types, a
+  collection."
   [synset edge-types]
   (let [graph (build-graph-aux (uber/digraph (:id synset)) synset edge-types)
         roots (graph-roots graph)]
@@ -117,8 +120,8 @@
 
 (defn taxonomy-max-depth
   "The maximum depth of the taxonomy for the POS.
-   Call it with one of #{:noun-synsets :verb-synsets :adverb-synsets :adjective-synsets}
-   It is computationally expensive, but memoized."
+  Call it with one of #{:noun-synsets :verb-synsets :adverb-synsets :adjective-synsets}
+  It is computationally expensive, but memoized."
   [dict synset-pos]
   (or (get @max-depths-memo synset-pos)
       (let [d (max-depth (dict synset-pos))]
@@ -127,12 +130,12 @@
 
 (defn path-similarity
   "Path Distance Similarity:
-   Return a score denoting how similar two word senses are, based on the
-   shortest path that connects the senses in the is-a (hypernym/hypnoym)
-   taxonomy. The score is in the range 0 to 1, except in those cases where
-   a path cannot be found (will only be true for verbs as there are many
-   distinct verb taxonomies), in which case None is returned. A score of
-   1 represents identity i.e. comparing a sense with itself will return 1."
+  Return a score denoting how similar two word senses are, based on the
+  shortest path that connects the senses in the is-a (hypernym/hypnoym)
+  taxonomy. The score is in the range 0 to 1, except in those cases where
+  a path cannot be found (will only be true for verbs as there are many
+  distinct verb taxonomies), in which case None is returned. A score of
+  1 represents identity i.e. comparing a sense with itself will return 1."
   [dict term1 term2]
   (let [s1 (-> term1 dict core/synset)
         g1 (build-graph s1 [:hypernym :hypernym-instance])
@@ -144,9 +147,9 @@
 
 (defn lch-similarity
   "Return a score denoting how similar two word senses are, based on the
-   shortest path that connects the senses (as above) and the maximum depth
-   of the taxonomy in which the senses occur. The relationship is given as
-   -log(p/2d) where p is the shortest path length and d is the taxonomy depth."
+  shortest path that connects the senses (as above) and the maximum depth
+  of the taxonomy in which the senses occur. The relationship is given as
+  -log(p/2d) where p is the shortest path length and d is the taxonomy depth."
   [dict term1 term2]
   (let [s1 (-> term1 dict core/synset)
         s2 (-> term2 dict core/synset)
@@ -163,13 +166,14 @@
       (- (Math/log (/ p (* 2.0 d)))))))
 
 (defn least-common-subsumer
-  "Return the Least Common Subsumer (most specific ancestor) common to the args paths.
+  "Return the Least Common Subsumer (most specific ancestor) common to the args
+   paths.
 
-   The LCS does not necessarily feature in the shortest path connecting
-   the two senses, as it is by definition the common ancestor deepest in
-   the taxonomy, not closest to the two senses. Typically, however, it
-   will so feature. Where multiple candidates for the LCS exist, that
-   whose shortest path to the root node is the longest will be selected."
+  The LCS does not necessarily feature in the shortest path connecting
+  the two senses, as it is by definition the common ancestor deepest in
+  the taxonomy, not closest to the two senses. Typically, however, it
+  will so feature. Where multiple candidates for the LCS exist, that
+  whose shortest path to the root node is the longest will be selected."
   [dict term1 term2]
   (let [paths1 (map #(map :id %) (-> term1 dict core/synset hypernym-paths))
         paths2 (map #(map :id %) (-> term2 dict core/synset hypernym-paths))
@@ -193,12 +197,12 @@
 
 (defn wup-similarity
   "Wu-Palmer Similarity:
-   Return a score denoting how similar two word senses are, based on the
-   depth of the two senses in the taxonomy and that of their Least Common
-   Subsumer (most specific ancestor node, LCS).
+  Return a score denoting how similar two word senses are, based on the
+  depth of the two senses in the taxonomy and that of their Least Common
+  Subsumer (most specific ancestor node, LCS).
   
-   Where the LCS has multiple paths to the root, the longer path is used
-   for the purposes of the calculation."
+  Where the LCS has multiple paths to the root, the longer path is used
+  for the purposes of the calculation."
   [dict term1 term2]
   (let [lcs-sid (least-common-subsumer dict term1 term2)
         lcs-path (if (= lcs-sid :common-verb-root)

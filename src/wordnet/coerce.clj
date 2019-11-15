@@ -21,13 +21,14 @@
 (def pointer->keyword
   (map-invert keyword->pointer))
 
-;;; n NOUN
-;;; v VERB
-;;; a ADJECTIVE
-;;; s ADJECTIVE-SATELLITE (but returns same as "a", adjective. 
-;;; r ADVERB
 (defn pos
-  "Attempts to coerce a keyword, symbol or string into a POS enum"
+  "Attempts to coerce a keyword, symbol or string into a POS enum.
+
+  n NOUN
+  v VERB
+  a ADJECTIVE
+  s ADJECTIVE-SATELLITE (but returns same as 'a', adjective. 
+  r ADVERB"
   [k]
   (cond
     (instance? POS k)
