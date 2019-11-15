@@ -1,5 +1,10 @@
 language: clojure
-lein: lein2
-script: lein2 test
+script:
+  - git submodule update --init data
+  - lein test
 jdk:
-  - openjdk7
+  - openjdk8
+  - openjdk11
+notifications:
+  email:
+    - oubiwann@gmail.com
